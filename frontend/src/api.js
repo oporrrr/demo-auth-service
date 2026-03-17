@@ -1,12 +1,13 @@
 const BASE_URL = 'http://localhost:3000/api/v1'
+const ROLE_BASE_URL = 'http://localhost:3010/api/v1'
 
 function authHeader() {
   const token = localStorage.getItem('accessToken')
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-async function request(method, path, body) {
-  const res = await fetch(`${BASE_URL}${path}`, {
+async function request(method, path, body, baseUrl = BASE_URL) {
+  const res = await fetch(`${baseUrl}${path}`, {
     method,
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: body ? JSON.stringify(body) : undefined,
@@ -17,9 +18,9 @@ async function request(method, path, body) {
 
 export const api = {
   // Auth
-  register: (body) => request('POST', '/auth/register', body),
-  login: (body) => request('POST', '/auth/login', body),
-  logout: (refreshToken) => request('POST', '/auth/logout', { refreshToken }),
+  register: (body) => request('POST', '/auth/register?system=EBPP', body, ROLE_BASE_URL),
+  login: (body) => request('POST', '/auth/login?system=EBPP', body, ROLE_BASE_URL),
+  logout: (refreshToken) => request('POST', '/auth/logout', { refreshToken }, ROLE_BASE_URL),
 
   // Account
   getInformation: () => request('GET', '/account/information'),
